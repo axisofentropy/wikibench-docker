@@ -27,7 +27,7 @@ ENV MYSQL_CONNECTOR=mysql-connector-java-$MYSQL_CONNECTOR_VERSION
 RUN curl --location https://dev.mysql.com/get/Downloads/Connector-J/$MYSQL_CONNECTOR.tar.gz | tar -xzvf - $MYSQL_CONNECTOR/$MYSQL_CONNECTOR.jar
 
 # Fetch and sort a traces file.
-RUN curl http://www.wikibench.eu/wiki/2007-10/wiki.1191201596.gz | gunzip | head -n 100000 | cut -f 2,3,4 -d ' ' | sort -k1,1M -k2n > ./traces
+RUN curl http://www.wikibench.eu/wiki/2007-10/wiki.1191201596.gz | gunzip | head -n 1000000 | cut -f 2,3,4 -d ' ' | sort -k1,1M -k2n > ./traces
 
 # Build TraceBench with the MySQL connector.
 RUN cd ./$WIKIBENCH/tracebench/ && ant build -Dconnector=../../$MYSQL_CONNECTOR/$MYSQL_CONNECTOR.jar

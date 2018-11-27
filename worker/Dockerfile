@@ -25,9 +25,9 @@ RUN curl http://mirror.reverse.net/pub/apache//httpcomponents/httpcore/binary/$H
 COPY *.sh ./
 
 # Set default environment variables.
-ENV CONTROLLER_HOST=wikibench-controller \
+ENV CONTROLLER_ADDR=controller \
     THREAD_COUNT=1 \
-    TARGET_HOST=localhost \
+    TARGET_ADDR=target \
     TARGET_PORT=80 \
     TIMEOUT=7000
 
