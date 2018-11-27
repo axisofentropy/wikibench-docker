@@ -25,12 +25,15 @@ RUN curl http://mirror.reverse.net/pub/apache//httpcomponents/httpcore/binary/$H
 COPY *.sh ./
 
 # Set default environment variables.
-ENV CONTROLLER_HOST=192.168.128.48 \
+ENV CONTROLLER_HOST=wikibench-controller \
     THREAD_COUNT=1 \
-    TARGET_HOST=172.16.203.96 \
+    TARGET_HOST=localhost \
     TARGET_PORT=80 \
-    TIMEOUT=7000 \
-    LOGFILE=logfile.txt
+    TIMEOUT=7000
+
+# Specify a volume to share output.
+RUN mkdir /log
+VOLUME ["/log"]
 
 # Start the worker.
 CMD /app/worker.sh
