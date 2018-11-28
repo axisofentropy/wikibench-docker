@@ -1,0 +1,28 @@
+version: '2.0'
+services:
+        controller:
+                image: idyl/wikibench-controller
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=sample-4G"
+                expose:
+                        - 48657
+                environment:
+                        - MYSQL_USER=root
+                        - MYSQL_PASSWORD=password
+                        - MYSQL_DATABASE=wikidb
+                        - MYSQL_HOST=localhost
+                        - MYSQL_PORT=3306
+                        - WORKER_COUNT=1
+        worker:
+                image: idyl/wikibench-worker
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=sample-1G"
+                links:
+                        - controller:controller
+                environment:
+                        - THREAD_COUNT=64
+                        - CONTROLLER_ADDR=controller
+                        - TARGET_ADDR=localhost
+                        - TIMEOUT=500
