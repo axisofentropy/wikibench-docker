@@ -14,4 +14,4 @@ fi
 
 # Start up the controller and wait for connections from all workers.
 echo "Starting controller with " "`wc -l ./tracebench | cut -f1 -d' '`" " traces"
-cat ./tracebench | $WIKIBENCH/wikijector/wikijector.sh controller /app/$HTTPCORE/lib /app/$HTTPCLIENT/lib $HOSTNAME $WORKER_COUNT
+cat ./tracebench | $WIKIBENCH/wikijector/wikijector.sh vcontroller /app/$HTTPCORE/lib /app/$HTTPCLIENT/lib $HOSTNAME $WORKER_COUNT
