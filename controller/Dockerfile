@@ -19,6 +19,10 @@ ENV HTTPCORE_VERSION=4.4.10
 ENV HTTPCORE=httpcomponents-core-$HTTPCORE_VERSION
 RUN curl http://mirror.reverse.net/pub/apache//httpcomponents/httpcore/binary/$HTTPCORE-bin.tar.gz | tar -xzvf -
 
+# Specify a volume to share output.
+RUN mkdir /log
+VOLUME ["/log"]
+
 # Worker and Controller Dockerfiles are identical up to this point.
 
 # Fetch and extract the Java MySQL connector.

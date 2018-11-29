@@ -19,6 +19,10 @@ ENV HTTPCORE_VERSION=4.4.10
 ENV HTTPCORE=httpcomponents-core-$HTTPCORE_VERSION
 RUN curl http://mirror.reverse.net/pub/apache//httpcomponents/httpcore/binary/$HTTPCORE-bin.tar.gz | tar -xzvf -
 
+# Specify a volume to share output.
+RUN mkdir /log
+VOLUME ["/log"]
+
 # Worker and Controller Dockerfiles are identical up to this point.
 
 # Include the latest scripts.
@@ -30,10 +34,6 @@ ENV CONTROLLER_ADDR=controller \
     TARGET_ADDR=target \
     TARGET_PORT=80 \
     TIMEOUT=7000
-
-# Specify a volume to share output.
-RUN mkdir /log
-VOLUME ["/log"]
 
 # Start the worker.
 CMD /app/worker.sh
