@@ -3,9 +3,10 @@
 # Check for existence of a reduced trace file.
 if [ ! -f ./tracebench ]; then
 	# Create reduced subset of only interesting traces.
-	echo "Reducing " "`wc -l ./traces | cut -f1 -d' '`" " traces"
+	echo "Reducing" "`wc -l ./traces | cut -f1 -d' '`" "traces by" "${REDUCTION_PERMIL}" "per mille."
+	echo "This will take some time."
 	cat ./traces | \
-		time java -classpath . -jar $WIKIBENCH/tracebench/build/lib/TraceBench.jar 0 "jdbc:mysql://$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE?user=$MYSQL_USER&password=$MYSQL_PASSWORD" plsampling epoch_ts | \
+		time java -classpath . -jar $WIKIBENCH/tracebench/build/lib/TraceBench.jar "${REDUCTION_PERMIL}" "jdbc:mysql://$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE?user=$MYSQL_USER&password=$MYSQL_PASSWORD" plsampling epoch_ts | \
 		sed 's:wiki/:index.php/:' | \
 		sed 's:w/::' > ./tracebench
 else

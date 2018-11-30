@@ -45,6 +45,7 @@ ENV MYSQL_USER=root \
     MYSQL_DATABASE=mirror \
     MYSQL_HOST=172.16.203.84 \
     MYSQL_PORT=3306 \
+    REDUCTION_PERMIL=900 \
     WORKER_COUNT=1
 
 # Publish the hardcoded TCP port for the controller.
