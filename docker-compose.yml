@@ -5,24 +5,98 @@ services:
                 network_mode: bridge
                 labels:
                         - "com.joyent.package=sample-4G"
+                        - 'com.docker.swarm.affinities=["container!=mirror-database*"]'
+                        - "triton.cns.services=wikibench-controller"
+                        - "wikibench-controller"
                 expose:
                         - 48657
                 environment:
+                        - container!=mirror-database*
                         - MYSQL_USER=root
-                        - MYSQL_PASSWORD=password
-                        - MYSQL_DATABASE=wikidb
-                        - MYSQL_HOST=localhost
+                        - MYSQL_PASSWORD=SGK22152FJdfslR
+                        - MYSQL_DATABASE=mirror
+                        - MYSQL_HOST=172.16.203.84
                         - MYSQL_PORT=3306
-                        - WORKER_COUNT=1
-        worker:
+                        - REDUCTION_PERMIL=600
+                        - WORKER_COUNT=24
+        balancer_a:
+                image: wikipedia-nginx:2018-11
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=demo-caching-16G"
+                expose:
+                        - 80
+                environment:
+                        - container!=wikibenchdocker_balancer_b
+                        - container!=wikibenchdocker_balancer_c
+        balancer_b:
+                image: wikipedia-nginx:2018-11
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=demo-caching-16G"
+                expose:
+                        - 80
+                environment:
+                        - container!=wikibenchdocker_balancer_a
+                        - container!=wikibenchdocker_balancer_c
+        balancer_c:
+                image: wikipedia-nginx:2018-11
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=demo-caching-16G"
+                expose:
+                        - 80
+                environment:
+                        - container!=wikibenchdocker_balancer_b
+                        - container!=wikibenchdocker_balancer_a
+        worker_a:
                 image: idyl/wikibench-worker
                 network_mode: bridge
                 labels:
-                        - "com.joyent.package=sample-1G"
+                        - "com.joyent.package=sample-256M"
+                        - "wikibench-worker"
+                restart: on-failure
                 links:
                         - controller:controller
+                        - balancer_a:balancer_a
+                volumes_from:
+                        - controller:rw
                 environment:
                         - THREAD_COUNT=64
                         - CONTROLLER_ADDR=controller
-                        - TARGET_ADDR=localhost
+                        - TARGET_ADDR=balancer_a
+                        - TIMEOUT=500
+        worker_b:
+                image: idyl/wikibench-worker
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=sample-256M"
+                        - "wikibench-worker"
+                restart: on-failure
+                links:
+                        - controller:controller
+                        - balancer_b:balancer_b
+                volumes_from:
+                        - controller:rw
+                environment:
+                        - THREAD_COUNT=64
+                        - CONTROLLER_ADDR=controller
+                        - TARGET_ADDR=balancer_b
+                        - TIMEOUT=500
+        worker_c:
+                image: idyl/wikibench-worker
+                network_mode: bridge
+                labels:
+                        - "com.joyent.package=sample-256M"
+                        - "wikibench-worker"
+                restart: on-failure
+                links:
+                        - controller:controller
+                        - balancer_c:balancer_c
+                volumes_from:
+                        - controller:rw
+                environment:
+                        - THREAD_COUNT=64
+                        - CONTROLLER_ADDR=controller
+                        - TARGET_ADDR=balancer_c
                         - TIMEOUT=500
